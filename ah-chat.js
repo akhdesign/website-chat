@@ -1,12 +1,5 @@
 /*!
  * ah design · Website-Chat Widget v1
- * Einbinden (Site Settings → Custom Code → Footer):
- *   <script src="https://cdn.jsdelivr.net/gh/akhdesign/website-chat@v1/ah-chat.js"
- *           data-api="https://ahdesign-website-chat.DEINNAME.workers.dev" defer></script>
- * Optional am Script-Tag: data-calendly, data-mail, data-privacy, data-accent (#hex), data-hide-on="/anfrage,/website-check"
- * Jeder Button mit dem Attribut data-ahchat-open öffnet den Chat (Value = Frage, die direkt gestellt wird – optional).
- * Ohne data-api läuft das Widget im Demo-Modus mit Beispielantworten.
- * Kein GSAP, keine Abhängigkeiten.
  */
 (function () {
   'use strict';
@@ -63,23 +56,20 @@
 .ahc-x,.ahc-send,.ahc-launch{padding:0!important;line-height:1}\
 .ahc{--ahc-accent:#c6f432;--ahc-accent-ink:#0b0b0b;--ahc-bg:#0d0d0d;--ahc-panel:#141414;--ahc-bot:#1f1f1f;--ahc-text:#f2f2f2;--ahc-muted:#8d8d8d;--ahc-line:rgba(255,255,255,.08);--ahc-read:#53bdeb;--ahc-radius:18px;--ahc-x:24px;--ahc-y:24px;\
 font-family:inherit;font-size:15px;line-height:1.45;color:var(--ahc-text);-webkit-font-smoothing:antialiased}\
-.ahc-launch{position:fixed;right:var(--ahc-x);bottom:var(--ahc-y);z-index:2147483000;width:62px;height:62px;padding:0;margin:0;border-radius:50%;border:1px solid rgba(255,255,255,.16);cursor:pointer;color:#fff;display:grid;place-items:center;isolation:isolate;\
-background:radial-gradient(circle at 50% 30%,#2b2b2b 0%,#121212 55%,#060606 100%);\
-box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 22px rgba(198,244,50,.18),inset 0 1px 1px rgba(255,255,255,.25),inset 0 -10px 18px rgba(0,0,0,.6);\
-transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s}\
-.ahc-orb{position:absolute;inset:0;border-radius:50%;overflow:hidden;z-index:-1;pointer-events:none}\
-.ahc-orb:before{content:"";position:absolute;inset:0;border-radius:50%;\
-background:conic-gradient(from 0deg,transparent 0deg,transparent 200deg,rgba(91,140,255,.55) 250deg,#2fd4c8 300deg,var(--ahc-accent) 345deg,transparent 360deg);\
--webkit-mask:radial-gradient(closest-side,transparent 68%,#000 84%,#000 100%);mask:radial-gradient(closest-side,transparent 68%,#000 84%,#000 100%);\
-filter:blur(2px);opacity:.9;animation:ahc-spin 4.5s linear infinite}\
-.ahc-orb:after{content:"";position:absolute;inset:18%;border-radius:50%;background:radial-gradient(circle,rgba(198,244,50,.22),rgba(47,212,200,.12) 45%,transparent 70%);filter:blur(5px);animation:ahc-breathe 3.6s ease-in-out infinite}\
-.ahc-shine{position:absolute;inset:0;border-radius:50%;pointer-events:none;background:radial-gradient(ellipse 60% 35% at 50% 12%,rgba(255,255,255,.28),transparent 70%)}\
-.ahc-launch:hover{transform:scale(1.07);box-shadow:0 14px 36px rgba(0,0,0,.55),0 0 34px rgba(198,244,50,.32),inset 0 1px 1px rgba(255,255,255,.3),inset 0 -10px 18px rgba(0,0,0,.6)}\
+.ahc-launch{position:fixed;right:var(--ahc-x);bottom:var(--ahc-y);z-index:2147483000;width:62px;height:62px;padding:0;margin:0;border:0;border-radius:50%;background:transparent;cursor:pointer;color:#fff;display:grid;place-items:center;isolation:isolate;-webkit-tap-highlight-color:transparent}\
+.ahc-disc{position:absolute;inset:0;border-radius:50%;z-index:-2;background:radial-gradient(circle at 50% 45%,#1d1f1a 0%,#121311 70%,#0d0e0c 100%);box-shadow:0 10px 28px rgba(0,0,0,.45);opacity:0;transform:scale(.82);transition:opacity .35s ease,transform .45s cubic-bezier(.22,1,.36,1)}\
+.ahc-orb{position:absolute;inset:0;border-radius:50%;z-index:-1;pointer-events:none;opacity:0;transition:opacity .45s ease;\
+box-shadow:inset 5px 4px 12px -5px rgba(198,244,50,.6),inset 5px 4px 12px -5px color-mix(in srgb,var(--ahc-accent) 60%,transparent),inset 1px 1px 2px rgba(255,255,255,.14);animation:ahc-spin 3.6s linear infinite}\
+.ahc-launch:hover .ahc-disc,.ahc-launch:focus-visible .ahc-disc,.ahc.is-open .ahc-disc{opacity:1;transform:none}\
+.ahc-launch:hover .ahc-orb,.ahc-launch:focus-visible .ahc-orb,.ahc.is-open .ahc-orb{opacity:.9}\
+@media (hover:none){.ahc-disc{opacity:1;transform:none}.ahc-orb{opacity:.75}}\
 .ahc-launch:focus{outline:none}\
 .ahc-launch:focus-visible{outline:2px solid rgba(255,255,255,.55);outline-offset:3px}\
-.ahc-launch svg{width:26px;height:26px;position:absolute;filter:drop-shadow(0 0 6px rgba(255,255,255,.35));transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .2s}\
-.ahc-launch .ahc-i-close{opacity:0;transform:rotate(-90deg) scale(.6)}\
-.ahc.is-open .ahc-launch .ahc-i-chat{opacity:0;transform:rotate(90deg) scale(.6)}\
+.ahc-launch svg{position:absolute;transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .2s}\
+.ahc-launch .ahc-i-chat{width:34px;height:34px;filter:drop-shadow(0 0 8px rgba(198,244,50,.25))}\
+.ahc-launch:hover .ahc-i-chat{transform:scale(.88)}\
+.ahc-launch .ahc-i-close{width:24px;height:24px;opacity:0;transform:rotate(-90deg) scale(.6)}\
+.ahc.is-open .ahc-launch .ahc-i-chat{opacity:0;transform:rotate(90deg) scale(.5)}\
 .ahc.is-open .ahc-launch .ahc-i-close{opacity:1;transform:none}\
 .ahc-badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:#ff3b30;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;transform:scale(0);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}\
 .ahc.has-unread .ahc-badge{transform:scale(1)}\
@@ -171,11 +161,11 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
 .ahc.is-open .ahc-launch{opacity:0;pointer-events:none}\
 .ahc{--ahc-x:16px;--ahc-y:16px}\
 .ahc-input{font-size:16px}}\
-@media (prefers-reduced-motion:reduce){.ahc *:not(.ahc-orb){animation:none!important;transition:none!important}.ahc-orb:before{animation:ahc-spin 9s linear infinite!important}.ahc-orb:after{animation:none!important}}';
+@media (prefers-reduced-motion:reduce){.ahc *:not(.ahc-orb){animation:none!important;transition:none!important}.ahc-orb{animation:ahc-spin 8s linear infinite!important}}';
 
   // ───────────── Icons ─────────────
   var I = {
-    chat: '<svg class="ahc-i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M12 3c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7z"/><path d="M19 15.5c.2 1.4.9 2.1 2.3 2.3-1.4.2-2.1.9-2.3 2.3-.2-1.4-.9-2.1-2.3-2.3 1.4-.2 2.1-.9 2.3-2.3z"/></svg>',
+    chat: '<svg class="ahc-i-chat" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="ahc-g" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f1ffb8"/><stop offset=".45" style="stop-color:var(--ahc-accent,#c6f432)"/><stop offset="1" stop-color="#6fa80f"/></linearGradient></defs><path fill="url(#ahc-g)" d="M12 2c.55 5.3 4.7 9.45 10 10-5.3.55-9.45 4.7-10 10-.55-5.3-4.7-9.45-10-10 5.3-.55 9.45-4.7 10-10z"/></svg>',
     close: '<svg class="ahc-i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     x: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     send: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4l17.4-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.1L4 11l9 1-9 1-2 6.3a1 1 0 0 0 1.4 1.1z"/></svg>',
@@ -204,7 +194,7 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
     launch.setAttribute('aria-label', 'Chat öffnen');
     launch.setAttribute('aria-expanded', 'false');
     launch.setAttribute('aria-controls', 'ahc-panel');
-    launch.innerHTML = '<span class="ahc-orb" aria-hidden="true"></span><span class="ahc-shine" aria-hidden="true"></span>' + I.chat + I.close + '<span class="ahc-badge" aria-hidden="true">1</span>';
+    launch.innerHTML = '<span class="ahc-disc" aria-hidden="true"></span><span class="ahc-orb" aria-hidden="true"></span>' + I.chat + I.close + '<span class="ahc-badge" aria-hidden="true">1</span>';
 
     nudge = el('div', 'ahc-nudge');
     nudge.textContent = 'Fragen zu Website, Preis oder Ablauf? Ich antworte sofort.';
