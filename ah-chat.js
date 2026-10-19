@@ -21,6 +21,8 @@
     mail: ds.mail || 'office@ahdesign.at',
     privacy: ds.privacy || '/datenschutz',
     accent: ds.accent || '',
+    right: ds.right || '',
+    bottom: ds.bottom || '',
     hideOn: (ds.hideOn || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean),
     title: 'ah design',
     subtitle: 'KI-Assistent · antwortet sofort',
@@ -56,20 +58,31 @@
   // ───────────── Styles ─────────────
   var css = '\
 .ahc,.ahc *{box-sizing:border-box}\
-.ahc{--ahc-accent:#c6f432;--ahc-accent-ink:#0b0b0b;--ahc-bg:#0d0d0d;--ahc-panel:#141414;--ahc-bot:#1f1f1f;--ahc-text:#f2f2f2;--ahc-muted:#8d8d8d;--ahc-line:rgba(255,255,255,.08);--ahc-read:#53bdeb;--ahc-radius:18px;\
+.ahc a,.ahc button,.ahc input,.ahc textarea,.ahc label,.ahc span,.ahc div{letter-spacing:normal;text-transform:none}\
+.ahc button,.ahc input,.ahc textarea{margin:0;font-family:inherit}\
+.ahc-x,.ahc-send,.ahc-launch{padding:0!important;line-height:1}\
+.ahc{--ahc-accent:#c6f432;--ahc-accent-ink:#0b0b0b;--ahc-bg:#0d0d0d;--ahc-panel:#141414;--ahc-bot:#1f1f1f;--ahc-text:#f2f2f2;--ahc-muted:#8d8d8d;--ahc-line:rgba(255,255,255,.08);--ahc-read:#53bdeb;--ahc-radius:18px;--ahc-x:24px;--ahc-y:24px;\
 font-family:inherit;font-size:15px;line-height:1.45;color:var(--ahc-text);-webkit-font-smoothing:antialiased}\
-.ahc-launch{position:fixed;right:20px;bottom:20px;z-index:2147483000;width:60px;height:60px;border-radius:50%;border:0;cursor:pointer;background:var(--ahc-accent);color:var(--ahc-accent-ink);display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s}\
-.ahc-launch:hover{transform:scale(1.06)}\
-.ahc-launch:focus-visible{outline:3px solid #fff;outline-offset:3px}\
-.ahc-launch svg{width:28px;height:28px;transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .2s;position:absolute}\
+.ahc-launch{position:fixed;right:var(--ahc-x);bottom:var(--ahc-y);z-index:2147483000;width:62px;height:62px;padding:0;margin:0;border-radius:50%;border:1px solid rgba(255,255,255,.16);cursor:pointer;color:#fff;display:grid;place-items:center;isolation:isolate;\
+background:radial-gradient(circle at 50% 30%,#2b2b2b 0%,#121212 55%,#060606 100%);\
+box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 22px rgba(198,244,50,.18),inset 0 1px 1px rgba(255,255,255,.25),inset 0 -10px 18px rgba(0,0,0,.6);\
+transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s}\
+.ahc-orb{position:absolute;inset:0;border-radius:50%;overflow:hidden;z-index:-1;pointer-events:none}\
+.ahc-orb:before{content:"";position:absolute;inset:-35%;background:conic-gradient(from 0deg,var(--ahc-accent),#2fd4c8,#5b8cff,#9b6bff,var(--ahc-accent));filter:blur(12px);opacity:.85;animation:ahc-spin 7s linear infinite;\
+-webkit-mask:radial-gradient(circle,transparent 30%,#000 52%,transparent 72%);mask:radial-gradient(circle,transparent 30%,#000 52%,transparent 72%)}\
+.ahc-orb:after{content:"";position:absolute;inset:22%;border-radius:50%;background:radial-gradient(circle,rgba(198,244,50,.55),rgba(47,212,200,.25) 45%,transparent 70%);filter:blur(6px);animation:ahc-breathe 3.2s ease-in-out infinite}\
+.ahc-shine{position:absolute;inset:0;border-radius:50%;pointer-events:none;background:radial-gradient(ellipse 60% 35% at 50% 12%,rgba(255,255,255,.28),transparent 70%)}\
+.ahc-launch:hover{transform:scale(1.07);box-shadow:0 14px 36px rgba(0,0,0,.55),0 0 34px rgba(198,244,50,.32),inset 0 1px 1px rgba(255,255,255,.3),inset 0 -10px 18px rgba(0,0,0,.6)}\
+.ahc-launch:focus-visible{outline:3px solid var(--ahc-accent);outline-offset:3px}\
+.ahc-launch svg{width:26px;height:26px;position:absolute;filter:drop-shadow(0 0 6px rgba(255,255,255,.35));transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .2s}\
 .ahc-launch .ahc-i-close{opacity:0;transform:rotate(-90deg) scale(.6)}\
 .ahc.is-open .ahc-launch .ahc-i-chat{opacity:0;transform:rotate(90deg) scale(.6)}\
 .ahc.is-open .ahc-launch .ahc-i-close{opacity:1;transform:none}\
 .ahc-badge{position:absolute;top:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:#ff3b30;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;transform:scale(0);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}\
 .ahc.has-unread .ahc-badge{transform:scale(1)}\
-.ahc-nudge{position:fixed;right:92px;bottom:30px;z-index:2147483000;max-width:240px;padding:10px 14px;border-radius:14px 14px 4px 14px;background:var(--ahc-panel);color:var(--ahc-text);border:1px solid var(--ahc-line);box-shadow:0 10px 30px rgba(0,0,0,.3);font-size:14px;cursor:pointer;opacity:0;transform:translateY(8px) scale(.96);transform-origin:bottom right;transition:opacity .3s,transform .4s cubic-bezier(.22,1,.36,1);pointer-events:none}\
+.ahc-nudge{position:fixed;right:calc(var(--ahc-x) + 76px);bottom:calc(var(--ahc-y) + 10px);z-index:2147483000;max-width:240px;padding:10px 14px;border-radius:14px 14px 4px 14px;background:var(--ahc-panel);color:var(--ahc-text);border:1px solid var(--ahc-line);box-shadow:0 10px 30px rgba(0,0,0,.3);font-size:14px;cursor:pointer;opacity:0;transform:translateY(8px) scale(.96);transform-origin:bottom right;transition:opacity .3s,transform .4s cubic-bezier(.22,1,.36,1);pointer-events:none}\
 .ahc-nudge.is-on{opacity:1;transform:none;pointer-events:auto}\
-.ahc-panel{position:fixed;right:20px;bottom:92px;z-index:2147483001;width:380px;height:min(640px,calc(100vh - 120px));display:flex;flex-direction:column;background:var(--ahc-bg);border:1px solid var(--ahc-line);border-radius:22px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);\
+.ahc-panel{position:fixed;right:var(--ahc-x);bottom:calc(var(--ahc-y) + 76px);z-index:2147483001;width:380px;height:min(640px,calc(100vh - var(--ahc-y) - 100px));display:flex;flex-direction:column;background:var(--ahc-bg);border:1px solid var(--ahc-line);border-radius:22px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);\
 opacity:0;transform:translateY(16px) scale(.97);transform-origin:bottom right;pointer-events:none;visibility:hidden;transition:opacity .25s,transform .4s cubic-bezier(.22,1,.36,1),visibility 0s .4s}\
 .ahc.is-open .ahc-panel{opacity:1;transform:none;pointer-events:auto;visibility:visible;transition:opacity .25s,transform .4s cubic-bezier(.22,1,.36,1),visibility 0s}\
 .ahc-head{display:flex;align-items:center;gap:12px;padding:14px 14px 14px 16px;background:var(--ahc-panel);border-bottom:1px solid var(--ahc-line)}\
@@ -94,8 +107,10 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
 .is-bot .ahc-bubble{background:var(--ahc-bot);border-top-left-radius:6px}\
 .is-user .ahc-bubble{background:var(--ahc-accent);color:var(--ahc-accent-ink);border-top-right-radius:6px;transform-origin:bottom right}\
 .is-bot .ahc-bubble{transform-origin:top left}\
-.ahc-bubble p{margin:0}\
-.ahc-bubble p+p{margin-top:6px}\
+.ahc-bubble,.ahc-bubble p,.ahc-bubble strong,.ahc-bubble a{font-family:inherit;font-size:15px;line-height:22px;letter-spacing:normal;text-transform:none}\
+.ahc-bubble p{margin:0;padding:0;max-width:none}\
+.ahc-bubble p+p{margin-top:0}\
+.ahc-bubble strong{font-weight:700}\
 .ahc-bubble a{color:var(--ahc-accent);text-decoration:underline;text-underline-offset:2px}\
 .is-user .ahc-bubble a{color:inherit}\
 .ahc-meta{display:inline-flex;align-items:center;gap:3px;float:right;margin:6px 0 -2px 10px;font-size:11px;line-height:1;opacity:.6;white-space:nowrap}\
@@ -111,13 +126,14 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
 .ahc-typing i:nth-child(2){animation-delay:.15s}\
 .ahc-typing i:nth-child(3){animation-delay:.3s}\
 .ahc-typing.is-out{animation:ahc-out .18s ease forwards}\
-.ahc-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px;animation:ahc-fade .4s .1s both}\
-.ahc-chip{border:1px solid var(--ahc-line);background:var(--ahc-panel);color:var(--ahc-text);border-radius:999px;padding:7px 12px;font:inherit;font-size:13.5px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:border-color .2s,background .2s,transform .2s}\
+.ahc-chips{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0 4px;animation:ahc-fade .4s .1s both}\
+.ahc-chip{-webkit-appearance:none;appearance:none;box-sizing:border-box;height:38px;margin:0;padding:0 14px;border:1px solid var(--ahc-line);background:var(--ahc-panel);color:var(--ahc-text);border-radius:999px;font-family:inherit;font-size:14px;font-weight:500;line-height:1;letter-spacing:normal;text-transform:none;white-space:nowrap;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;vertical-align:middle;transition:border-color .2s,background .2s,transform .2s}\
 .ahc-chip:hover{border-color:var(--ahc-accent);transform:translateY(-1px)}\
 .ahc-chip.is-main{background:var(--ahc-accent);color:var(--ahc-accent-ink);border-color:var(--ahc-accent);font-weight:600}\
-.ahc-chip svg{width:15px;height:15px;flex:none}\
+.ahc-chip svg{width:16px;height:16px;flex:none;display:block}\
 .ahc-card{width:100%;max-width:300px;margin-top:4px;padding:12px;border-radius:var(--ahc-radius);border-top-left-radius:6px;background:var(--ahc-bot);display:flex;flex-direction:column;gap:8px;animation:ahc-pop .32s cubic-bezier(.34,1.4,.64,1) both}\
-.ahc-card label{font-size:12px;color:var(--ahc-muted);display:flex;flex-direction:column;gap:4px}\
+.ahc-card label,.ahc-card label a,.ahc-card span{font-size:12px;line-height:1.35}\
+.ahc-card label{color:var(--ahc-muted);display:flex;flex-direction:column;gap:4px}\
 .ahc-card input,.ahc-card textarea{font:inherit;font-size:14px;color:var(--ahc-text);background:var(--ahc-bg);border:1px solid var(--ahc-line);border-radius:10px;padding:8px 10px;width:100%}\
 .ahc-card textarea{min-height:70px;resize:vertical}\
 .ahc-card input:focus,.ahc-card textarea:focus{outline:none;border-color:var(--ahc-accent)}\
@@ -125,9 +141,10 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
 .ahc-card .ahc-consent input{width:16px;height:16px;flex:none;margin-top:1px;accent-color:var(--ahc-accent)}\
 .ahc-card .ahc-consent a{color:var(--ahc-text)}\
 .ahc-card .ahc-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}\
-.ahc-card button{font:inherit;font-weight:600;border:0;border-radius:10px;padding:10px;background:var(--ahc-accent);color:var(--ahc-accent-ink);cursor:pointer}\
+.ahc-card button{font:inherit;font-size:14px;line-height:1.2;font-weight:600;border:0;border-radius:10px;padding:10px;background:var(--ahc-accent);color:var(--ahc-accent-ink);cursor:pointer}\
 .ahc-card button[disabled]{opacity:.5;cursor:default}\
-.ahc-err{font-size:12.5px;color:#ff8a80;min-height:0}\
+.ahc-err,.ahc-err a{font-size:12.5px;line-height:1.35}\
+.ahc-err{color:#ff8a80;min-height:0}\
 .ahc-foot{padding:10px 12px 8px;background:var(--ahc-panel);border-top:1px solid var(--ahc-line)}\
 .ahc-form{display:flex;align-items:flex-end;gap:8px}\
 .ahc-input{flex:1;font:inherit;font-size:15px;color:var(--ahc-text);background:var(--ahc-bg);border:1px solid var(--ahc-line);border-radius:22px;padding:10px 16px;resize:none;max-height:120px;line-height:1.35}\
@@ -136,9 +153,12 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
 .ahc-send{flex:none;width:42px;height:42px;border-radius:50%;border:0;background:var(--ahc-accent);color:var(--ahc-accent-ink);display:grid;place-items:center;cursor:pointer;transition:transform .2s,opacity .2s}\
 .ahc-send:disabled{opacity:.35;cursor:default;transform:scale(.92)}\
 .ahc-send svg{width:20px;height:20px}\
-.ahc-legal{margin-top:6px;font-size:11px;color:var(--ahc-muted);text-align:center}\
+.ahc-legal,.ahc-legal a{font-size:11px;line-height:1.4;font-weight:400}\
+.ahc-legal{margin-top:6px;color:var(--ahc-muted);text-align:center}\
 .ahc-legal a{color:inherit}\
 .ahc-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}\
+@keyframes ahc-spin{to{transform:rotate(360deg)}}\
+@keyframes ahc-breathe{0%,100%{opacity:.55;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}\
 @keyframes ahc-pop{from{opacity:0;transform:scale(.6) translateY(6px)}to{opacity:1;transform:none}}\
 @keyframes ahc-out{to{opacity:0;transform:scale(.7)}}\
 @keyframes ahc-fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}\
@@ -146,14 +166,13 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
 @media (max-width:520px){\
 .ahc-panel{right:0;bottom:0;width:100%;height:100%;height:100dvh;border-radius:0;border:0}\
 .ahc.is-open .ahc-launch{opacity:0;pointer-events:none}\
-.ahc-launch{right:16px;bottom:16px}\
-.ahc-nudge{right:84px;bottom:24px}\
+.ahc{--ahc-x:16px;--ahc-y:16px}\
 .ahc-input{font-size:16px}}\
 @media (prefers-reduced-motion:reduce){.ahc *{animation:none!important;transition:none!important}}';
 
   // ───────────── Icons ─────────────
   var I = {
-    chat: '<svg class="ahc-i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4 8.6 8.6 0 0 1-3.9-.9L3 21l2-5.3a8.3 8.3 0 0 1-1-4.2A8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z"/></svg>',
+    chat: '<svg class="ahc-i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M12 3c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7z"/><path d="M19 15.5c.2 1.4.9 2.1 2.3 2.3-1.4.2-2.1.9-2.3 2.3-.2-1.4-.9-2.1-2.3-2.3 1.4-.2 2.1-.9 2.3-2.3z"/></svg>',
     close: '<svg class="ahc-i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     x: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     send: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4l17.4-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.1L4 11l9 1-9 1-2 6.3a1 1 0 0 0 1.4 1.1z"/></svg>',
@@ -174,13 +193,15 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
 
     root = el('div', 'ahc');
     if (cfg.accent) root.style.setProperty('--ahc-accent', cfg.accent);
+    if (cfg.right) root.style.setProperty('--ahc-x', px(cfg.right));
+    if (cfg.bottom) root.style.setProperty('--ahc-y', px(cfg.bottom));
 
     launch = el('button', 'ahc-launch');
     launch.type = 'button';
     launch.setAttribute('aria-label', 'Chat öffnen');
     launch.setAttribute('aria-expanded', 'false');
     launch.setAttribute('aria-controls', 'ahc-panel');
-    launch.innerHTML = I.chat + I.close + '<span class="ahc-badge" aria-hidden="true">1</span>';
+    launch.innerHTML = '<span class="ahc-orb" aria-hidden="true"></span><span class="ahc-shine" aria-hidden="true"></span>' + I.chat + I.close + '<span class="ahc-badge" aria-hidden="true">1</span>';
 
     nudge = el('div', 'ahc-nudge');
     nudge.textContent = 'Fragen zu Website, Preis oder Ablauf? Ich antworte sofort.';
@@ -274,7 +295,7 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
 
   // ───────────── Verlauf ─────────────
   function restore() {
-    if (state.messages.length) addBot(GREETING, state.greetT || '', true);
+    if (state.messages.length) addBotParts(GREETING, state.greetT || '', true);
     state.messages.forEach(function (m) {
       if (m.role === 'user') addUser(m.content, m.t, true);
       else addBotParts(m.content, m.t, true);
@@ -291,7 +312,8 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
     wait(REDUCED ? 0 : 700).then(function () {
       hideTyping(dots);
       state.greetT = now();
-      addBot(GREETING, state.greetT);
+      return revealParts(splitParts(GREETING), null);
+    }).then(function () {
       var chips = el('div', 'ahc-chips');
       SUGGESTIONS.forEach(function (q) {
         var b = el('button', 'ahc-chip');
@@ -599,6 +621,7 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
     var d = new Date();
     return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
   }
+  function px(v) { return /^\d+(\.\d+)?$/.test(String(v)) ? v + 'px' : String(v); }
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   function el(tag, cls) { var n = document.createElement(tag); if (cls) n.className = cls; return n; }
   function esc(s) {
