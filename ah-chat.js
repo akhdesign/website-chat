@@ -125,6 +125,9 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
 .ahc-chip:hover{border-color:var(--ahc-accent);transform:translateY(-1px)}\
 .ahc-chip.is-main{background:var(--ahc-accent);color:var(--ahc-accent-ink);border-color:var(--ahc-accent);font-weight:600}\
 .ahc-chip svg{width:16px;height:16px;flex:none;display:block}\
+.ahc-chip-t{display:block;line-height:1;text-box:trim-both cap alphabetic}\
+.ahc-chips[data-actions]{flex-wrap:nowrap}\
+.ahc-chips[data-actions] .ahc-chip{flex:1 1 0;min-width:0}\
 .ahc-card{width:100%;max-width:300px;margin-top:4px;padding:12px;border-radius:var(--ahc-radius);border-top-left-radius:6px;background:var(--ahc-bot);display:flex;flex-direction:column;gap:8px;animation:ahc-pop .32s cubic-bezier(.34,1.4,.64,1) both}\
 .ahc-card label,.ahc-card label a,.ahc-card span{font-size:12px;line-height:1.35}\
 .ahc-card label{color:var(--ahc-muted);display:flex;flex-direction:column;gap:4px}\
@@ -203,6 +206,7 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
     panel = el('section', 'ahc-panel');
     panel.id = 'ahc-panel';
     panel.setAttribute('role', 'dialog');
+    panel.setAttribute('data-lenis-prevent', '');
     panel.setAttribute('aria-label', 'Chat mit dem KI-Assistenten von ah design');
     panel.innerHTML =
       '<header class="ahc-head">' +
@@ -211,7 +215,7 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
         '<div class="ahc-status"><span>' + esc(cfg.subtitle) + '</span><span class="ahc-st-typing">schreibt …</span></div></div>' +
         '<button type="button" class="ahc-x" aria-label="Chat schließen">' + I.x + '</button>' +
       '</header>' +
-      '<div class="ahc-log" role="log" aria-live="polite" aria-relevant="additions"><div class="ahc-day">Heute</div></div>' +
+      '<div class="ahc-log" data-lenis-prevent role="log" aria-live="polite" aria-relevant="additions"><div class="ahc-day">Heute</div></div>' +
       '<div class="ahc-foot">' +
         '<form class="ahc-form" autocomplete="off">' +
           '<label class="ahc-sr" for="ahc-input">Ihre Nachricht</label>' +
@@ -312,7 +316,7 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
       SUGGESTIONS.forEach(function (q) {
         var b = el('button', 'ahc-chip');
         b.type = 'button';
-        b.textContent = q;
+        b.innerHTML = '<span class="ahc-chip-t">' + esc(q) + '</span>';
         b.addEventListener('click', function () { chips.remove(); ask(q); });
         chips.appendChild(b);
       });
@@ -360,7 +364,8 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
     }).then(function (res) {
       if (!res || !res.reply) throw new Error('leer');
       return res;
-    }).catch(function () {
+    }).catch(function (e) {
+      console.warn('[ah-chat] Anfrage fehlgeschlagen:', e && e.message, '· data-api =', API);
       return { reply: 'Da hakt gerade etwas. Andreas beantwortet Ihre Frage aber gern persönlich.', action: 'kontakt' };
     }).then(function (res) {
       var parts = splitParts(res.reply);
@@ -458,13 +463,13 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
     if (instant) wrap.style.animation = 'none';
 
     if (action === 'konfigurator') {
-      wrap.appendChild(linkChip(I.calc + 'Preis im Konfigurator berechnen', '/anfrage', true, false));
-      wrap.appendChild(linkChip(I.cal + 'Erstgespräch buchen', cfg.calendly, false, true));
+      wrap.appendChild(linkChip(I.calc + '<span class="ahc-chip-t">Preis berechnen</span>', '/anfrage', true, false));
+      wrap.appendChild(linkChip(I.cal + '<span class="ahc-chip-t">Call buchen</span>', cfg.calendly, false, true));
     } else {
-      wrap.appendChild(linkChip(I.cal + 'Erstgespräch buchen', cfg.calendly, true, true));
+      wrap.appendChild(linkChip(I.cal + '<span class="ahc-chip-t">Call buchen</span>', cfg.calendly, true, true));
       var m = el('button', 'ahc-chip');
       m.type = 'button';
-      m.innerHTML = I.mail + 'Nachricht an Andreas';
+      m.innerHTML = I.mail + '<span class="ahc-chip-t">Nachricht senden</span>';
       m.addEventListener('click', function () { wrap.remove(); showLeadForm(); });
       wrap.appendChild(m);
     }
@@ -556,6 +561,7 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
   function callApi(path, body) {
     var ctrl = window.AbortController ? new AbortController() : null;
     var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 25000);
+    if (/DEINNAME/.test(API)) console.warn('[ah-chat] data-api ist noch der Platzhalter – echte Worker-Adresse eintragen:', API);
     return fetch(API + path, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -564,6 +570,7 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
     }).then(function (r) {
       clearTimeout(timer);
       return r.json().catch(function () { return { ok: false }; }).then(function (j) {
+        if (!r.ok) console.warn('[ah-chat] Worker antwortet mit', r.status, j);
         if (!r.ok && path === '/chat') throw new Error('http');
         return j;
       });
