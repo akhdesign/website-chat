@@ -83,9 +83,8 @@ box-shadow:inset 5px 4px 12px -5px rgba(198,244,50,.6),inset 5px 4px 12px -5px c
 opacity:0;transform:translateY(16px) scale(.97);transform-origin:bottom right;pointer-events:none;visibility:hidden;transition:opacity .25s,transform .4s cubic-bezier(.22,1,.36,1),visibility 0s .4s}\
 .ahc.is-open .ahc-panel{opacity:1;transform:none;pointer-events:auto;visibility:visible;transition:opacity .25s,transform .4s cubic-bezier(.22,1,.36,1),visibility 0s}\
 .ahc-head{display:flex;align-items:center;gap:12px;padding:14px 14px 14px 16px;background:var(--ahc-panel);border-bottom:1px solid var(--ahc-line)}\
-.ahc-avatar{position:relative;flex:none;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 50% 40%,#23251f,#141513 75%);border:1px solid color-mix(in srgb,var(--ahc-accent) 35%,transparent)}\
-.ahc-avatar:after{content:"";position:absolute;left:0;bottom:-1px;width:11px;height:11px;border-radius:50%;background:#25d366;border:2px solid var(--ahc-panel);z-index:2}\
-.ahc-flowy{position:absolute;left:-3px;top:2px;width:56px;aspect-ratio:1145/890;animation:ahc-float 3.4s ease-in-out infinite;will-change:transform}\
+.ahc-avatar{position:relative;flex:none;width:52px;height:46px;background:none;border:0}\
+.ahc-flowy{position:absolute;left:-4px;top:1px;width:58px;aspect-ratio:1145/890;animation:ahc-float 3.4s ease-in-out infinite;will-change:transform}\
 .ahc-flowy img{position:absolute;inset:0;width:100%;height:100%;display:block;max-width:none;margin:0;pointer-events:none;-webkit-user-drag:none}\
 .ahc-flowy .ahc-hand{transform-origin:74.7% 93.3%;animation:ahc-wave 4.2s ease-in-out infinite}\
 .ahc-row .ahc-flowy{position:relative}\
