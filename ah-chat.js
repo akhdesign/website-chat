@@ -68,12 +68,15 @@ background:radial-gradient(circle at 50% 30%,#2b2b2b 0%,#121212 55%,#060606 100%
 box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 22px rgba(198,244,50,.18),inset 0 1px 1px rgba(255,255,255,.25),inset 0 -10px 18px rgba(0,0,0,.6);\
 transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s}\
 .ahc-orb{position:absolute;inset:0;border-radius:50%;overflow:hidden;z-index:-1;pointer-events:none}\
-.ahc-orb:before{content:"";position:absolute;inset:-35%;background:conic-gradient(from 0deg,var(--ahc-accent),#2fd4c8,#5b8cff,#9b6bff,var(--ahc-accent));filter:blur(12px);opacity:.85;animation:ahc-spin 7s linear infinite;\
--webkit-mask:radial-gradient(circle,transparent 30%,#000 52%,transparent 72%);mask:radial-gradient(circle,transparent 30%,#000 52%,transparent 72%)}\
-.ahc-orb:after{content:"";position:absolute;inset:22%;border-radius:50%;background:radial-gradient(circle,rgba(198,244,50,.55),rgba(47,212,200,.25) 45%,transparent 70%);filter:blur(6px);animation:ahc-breathe 3.2s ease-in-out infinite}\
+.ahc-orb:before{content:"";position:absolute;inset:0;border-radius:50%;\
+background:conic-gradient(from 0deg,transparent 0deg,transparent 200deg,rgba(91,140,255,.55) 250deg,#2fd4c8 300deg,var(--ahc-accent) 345deg,transparent 360deg);\
+-webkit-mask:radial-gradient(closest-side,transparent 68%,#000 84%,#000 100%);mask:radial-gradient(closest-side,transparent 68%,#000 84%,#000 100%);\
+filter:blur(2px);opacity:.9;animation:ahc-spin 4.5s linear infinite}\
+.ahc-orb:after{content:"";position:absolute;inset:18%;border-radius:50%;background:radial-gradient(circle,rgba(198,244,50,.22),rgba(47,212,200,.12) 45%,transparent 70%);filter:blur(5px);animation:ahc-breathe 3.6s ease-in-out infinite}\
 .ahc-shine{position:absolute;inset:0;border-radius:50%;pointer-events:none;background:radial-gradient(ellipse 60% 35% at 50% 12%,rgba(255,255,255,.28),transparent 70%)}\
 .ahc-launch:hover{transform:scale(1.07);box-shadow:0 14px 36px rgba(0,0,0,.55),0 0 34px rgba(198,244,50,.32),inset 0 1px 1px rgba(255,255,255,.3),inset 0 -10px 18px rgba(0,0,0,.6)}\
-.ahc-launch:focus-visible{outline:3px solid var(--ahc-accent);outline-offset:3px}\
+.ahc-launch:focus{outline:none}\
+.ahc-launch:focus-visible{outline:2px solid rgba(255,255,255,.55);outline-offset:3px}\
 .ahc-launch svg{width:26px;height:26px;position:absolute;filter:drop-shadow(0 0 6px rgba(255,255,255,.35));transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .2s}\
 .ahc-launch .ahc-i-close{opacity:0;transform:rotate(-90deg) scale(.6)}\
 .ahc.is-open .ahc-launch .ahc-i-chat{opacity:0;transform:rotate(90deg) scale(.6)}\
@@ -168,7 +171,7 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
 .ahc.is-open .ahc-launch{opacity:0;pointer-events:none}\
 .ahc{--ahc-x:16px;--ahc-y:16px}\
 .ahc-input{font-size:16px}}\
-@media (prefers-reduced-motion:reduce){.ahc *{animation:none!important;transition:none!important}}';
+@media (prefers-reduced-motion:reduce){.ahc *:not(.ahc-orb){animation:none!important;transition:none!important}.ahc-orb:before{animation:ahc-spin 9s linear infinite!important}.ahc-orb:after{animation:none!important}}';
 
   // ───────────── Icons ─────────────
   var I = {
