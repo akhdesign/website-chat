@@ -59,8 +59,11 @@
 .ahc-x,.ahc-send,.ahc-launch{padding:0!important;line-height:1}\
 .ahc{--ahc-accent:#c6f432;--ahc-accent-ink:#0b0b0b;--ahc-bg:#0d0d0d;--ahc-panel:#141414;--ahc-bot:#1f1f1f;--ahc-text:#f2f2f2;--ahc-muted:#8d8d8d;--ahc-line:rgba(255,255,255,.08);--ahc-read:#53bdeb;--ahc-radius:18px;--ahc-x:24px;--ahc-y:24px;\
 font-family:inherit;font-size:15px;line-height:1.45;color:var(--ahc-text);-webkit-font-smoothing:antialiased}\
-.ahc-launch{position:fixed;right:var(--ahc-x);bottom:var(--ahc-y);z-index:2147483000;width:62px;height:62px;padding:0;margin:0;border:1px solid rgba(255,255,255,.16);border-radius:50%;background:rgba(14,15,13,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 6px 20px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06);cursor:pointer;color:#fff;display:grid;place-items:center;isolation:isolate;-webkit-tap-highlight-color:transparent;transition:border-color .35s ease}\
+.ahc-launch{position:fixed;right:var(--ahc-x);bottom:var(--ahc-y);z-index:2147483000;width:62px;height:62px;padding:0;margin:0;border:1px solid rgba(255,255,255,.16);border-radius:50%;background:rgba(14,15,13,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 6px 20px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.06);cursor:pointer;color:#fff;display:grid;place-items:center;isolation:isolate;-webkit-tap-highlight-color:transparent}\
 .ahc-launch:hover,.ahc.is-open .ahc-launch{border-color:color-mix(in srgb,var(--ahc-accent) 45%,rgba(255,255,255,.16))}\
+.ahc-launch{transform:translateX(0);transition:transform .55s cubic-bezier(.22,1,.36,1),border-color .35s ease}\
+.ahc.is-away .ahc-launch{transform:translateX(calc(100% + var(--ahc-x) + 24px));pointer-events:none}\
+.ahc.is-away .ahc-nudge{opacity:0;pointer-events:none}\
 .ahc-disc{position:absolute;inset:0;border-radius:50%;z-index:-2;background:radial-gradient(circle at 50% 45%,#1d1f1a 0%,#121311 70%,#0d0e0c 100%);box-shadow:0 10px 28px rgba(0,0,0,.45);opacity:0;transform:scale(.82);transition:opacity .35s ease,transform .45s cubic-bezier(.22,1,.36,1)}\
 .ahc-orb{position:absolute;inset:0;border-radius:50%;z-index:-1;pointer-events:none;opacity:0;transition:opacity .45s ease;\
 box-shadow:inset 5px 4px 12px -5px rgba(198,244,50,.6),inset 5px 4px 12px -5px color-mix(in srgb,var(--ahc-accent) 60%,transparent),inset 1px 1px 2px rgba(255,255,255,.14);animation:ahc-spin 3.6s linear infinite}\
@@ -266,13 +269,32 @@ background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);bac
     });
 
     restore();
+    watchScroll();
     if (state.open) toggle(true, true);
     else scheduleNudge();
+  }
+
+  // Button beim Runterscrollen nach rechts rausschieben, beim Raufscrollen zurückholen
+  function watchScroll() {
+    var lastY = window.scrollY || 0, ticking = false;
+    function update() {
+      ticking = false;
+      var y = window.scrollY || 0, dy = y - lastY;
+      if (Math.abs(dy) < 6) return;
+      var atTop = y < 120;
+      var open = root.classList.contains('is-open');
+      root.classList.toggle('is-away', !open && !atTop && dy > 0);
+      lastY = y;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
   }
 
   function toggle(force, silent) {
     var open = typeof force === 'boolean' ? force : !root.classList.contains('is-open');
     root.classList.toggle('is-open', open);
+    if (open) root.classList.remove('is-away');
     root.classList.remove('has-unread');
     launch.setAttribute('aria-expanded', String(open));
     launch.setAttribute('aria-label', open ? 'Chat schließen' : 'Chat öffnen');
